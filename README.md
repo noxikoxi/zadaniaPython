@@ -1,4 +1,4 @@
 # zadaniaPython
-Zadanie na kurs z Języka Python
+Zadania na kurs z Języka Python
 
 Autor: Tomasz Cach
