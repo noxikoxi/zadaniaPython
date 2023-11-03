@@ -64,7 +64,7 @@ print('\n4.5\n')
 
 
 def odwracanie(L, left, right):
-    if left < 0 or right > len(L) - 1:
+    if left < 0 or right > len(L) - 1 or left > right:
         print("Podano nieprawidłowe indeksy listy")
         return None
 
