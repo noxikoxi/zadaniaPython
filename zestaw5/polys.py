@@ -2,10 +2,8 @@
 # Wielomian [a0, a1, a2] = a0 + a1*x + a2 *x*x
 
 def remove_redundant_zero(poly):
-    temp = len(poly) - 1
-    while poly[temp] == 0 and temp > 0:
-        poly = poly[:-1]
-        temp -= 1
+    while poly[-1] == 0 and len(poly) > 1:
+        poly.pop()
 
     return poly
 
