@@ -34,12 +34,12 @@ class Triangle:
 
         self._center = Point((self.pt1.x + self.pt2.x + self.pt3.x) / 3, (self.pt1.y + self.pt2.y + self.pt3.y) / 3)
 
-    @staticmethod
-    def from_points(points):
+    @classmethod
+    def from_points(cls,points):
         if len(points) != 3:
             raise ValueError("Podane nieprawidłową ilość punktów. Wymagane są 3")
 
-        return Triangle(points[0].x, points[0].y, points[1].x, points[1].y, points[2].x, points[2].y)
+        return cls(points[0].x, points[0].y, points[1].x, points[1].y, points[2].x, points[2].y)
 
     # Atrybutu wirtualne prostokąta ograniczającego trójkąt
     # Zwracają współrzędna
