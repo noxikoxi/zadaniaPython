@@ -1,3 +1,4 @@
+import datetime
 import random
 import sys
 
@@ -112,6 +113,12 @@ class Game:
         self.rottenFruit = RottenFruit()
         self.font = pygame.font.Font(None, 60)
         self.clock = pygame.time.Clock()
+        self.start_time = pygame.time.get_ticks()
+        self.game_time = 3 * 60 # W sekundach
+
+    def get_time_left(self):
+        time_seconds = (pygame.time.get_ticks() - self.start_time) // 1000
+        return datetime.timedelta(seconds=self.game_time) - datetime.timedelta(seconds=time_seconds)
 
     def draw(self):
         # Background
@@ -140,6 +147,10 @@ class Game:
         text_surface = self.font.render(f'Score: {self.score}', True, 'yellow')
         self.screen.blit(text_surface, (BLOCK_WIDTH/3, BLOCK_WIDTH/4))
 
+        # Time
+        time_surface = self.font.render(str(self.get_time_left())[2:], True, 'yellow')
+        self.screen.blit(time_surface, ((N_BLOCKS-3) * BLOCK_WIDTH, BLOCK_WIDTH/4))
+
     def checkCollisions(self):
         if Vector2(self.fruit.x, self.fruit.y) == self.snake.body[0]:
             self.snake.add_block = True
@@ -153,8 +164,13 @@ class Game:
 
         for block in self.snake.body[1:]:
             if block == self.snake.body[0]:
-                self.snake.reset()
-                self.score = 0
+                self.game_over()
+
+    def game_over(self):
+        self.snake.reset()
+        print(f'Twoj koncowy wynik: {self.score}')
+        self.score = 0
+        self.start_time = pygame.time.get_ticks()
 
     def spawnFruit(self, fruit, otherFruit):
         fruit.randomize()
@@ -165,7 +181,13 @@ class Game:
     def run(self):
         self.snake.move()
         self.checkCollisions()
-        print(self.clock.get_fps())
+
+        # Czas liczy sie dopiero po 1 ruchu
+        if self.snake.direction == Vector2(0, 0):
+            self.start_time = pygame.time.get_ticks()
+
+        if self.get_time_left() == datetime.timedelta(seconds=0):
+            self.game_over()
 
         self.fruit.updateNum -= 1
         self.rottenFruit.updateNum -= 1
