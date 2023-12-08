@@ -29,7 +29,7 @@ class Fruit:
         self.randomize()
         self.color = 'red'
 
-        self.updateNum = 20  # Po 10 Update zniknie
+        self.updateNum = 20  # Po 20 Update zniknie
 
     def resetUpdateNum(self):
         self.updateNum = 20
