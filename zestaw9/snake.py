@@ -3,7 +3,26 @@ import random
 import sys
 
 import pygame
-from pygame import Vector2
+# from pygame import Vector2
+
+
+class Vector2:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __add__(self, other):
+        return Vector2(self.x + other.x, self.y + other.y)
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __sub__(self, other):
+        return Vector2(self.x - other.x, self.y - other.y)
+
 
 BLOCK_WIDTH = 60
 N_BLOCKS = 11
@@ -14,7 +33,6 @@ FPS = 60
 pygame.init()
 pygame.font.init()
 pygame.display.set_caption("Snake")
-pygame.key.set_repeat(0)
 
 UPDATE = pygame.USEREVENT
 pygame.time.set_timer(UPDATE, GAME_SPEED)
@@ -27,7 +45,7 @@ class Fruit:
         self.x = 0
         self.y = 0
         self.randomize()
-        self.color = 'red'
+        self.color = (255, 0, 0)
 
         self.updateNum = 20  # Po 20 Update zniknie
 
@@ -39,8 +57,8 @@ class Fruit:
         self.y = random.randint(0, N_BLOCKS - 1)
 
     def draw(self, screen):
-        pygame.draw.circle(screen, self.color, ((self.x+0.5) * BLOCK_WIDTH,
-                                                (self.y+0.5) * BLOCK_WIDTH), radius=BLOCK_WIDTH/2)
+        pygame.draw.circle(screen, self.color, (int((self.x + 0.5) * BLOCK_WIDTH),
+                                                int((self.y + 0.5) * BLOCK_WIDTH)), int(BLOCK_WIDTH / 2))
 
 
 class RottenFruit(Fruit):
@@ -92,9 +110,8 @@ class Snake:
 
     def draw(self, screen):
         # Head
-        x, y = self.body[0]
         pygame.draw.rect(screen, self.headColor, pygame.rect.Rect(
-            x * BLOCK_WIDTH + 1, y * BLOCK_WIDTH + 1, BLOCK_WIDTH - 2, BLOCK_WIDTH - 2
+            self.body[0].x * BLOCK_WIDTH + 1, self.body[0].y * BLOCK_WIDTH + 1, BLOCK_WIDTH - 2, BLOCK_WIDTH - 2
         ))
 
         # Body
@@ -114,7 +131,7 @@ class Game:
         self.font = pygame.font.Font(None, 60)
         self.clock = pygame.time.Clock()
         self.start_time = pygame.time.get_ticks()
-        self.game_time = 3 * 60 # W sekundach
+        self.game_time = 3 * 60  # W sekundach
 
     def get_time_left(self):
         time_seconds = (pygame.time.get_ticks() - self.start_time) // 1000
@@ -144,12 +161,12 @@ class Game:
         self.rottenFruit.draw(self.screen)
 
         # Score
-        text_surface = self.font.render(f'Score: {self.score}', True, 'yellow')
-        self.screen.blit(text_surface, (BLOCK_WIDTH/3, BLOCK_WIDTH/4))
+        text_surface = self.font.render(f'Score: {self.score}', True, (255, 255, 0))
+        self.screen.blit(text_surface, (BLOCK_WIDTH / 3, int(BLOCK_WIDTH / 4)))
 
         # Time
-        time_surface = self.font.render(str(self.get_time_left())[2:], True, 'yellow')
-        self.screen.blit(time_surface, ((N_BLOCKS-3) * BLOCK_WIDTH, BLOCK_WIDTH/4))
+        time_surface = self.font.render(str(self.get_time_left())[2:], True, (255, 255, 0))
+        self.screen.blit(time_surface, ((N_BLOCKS - 3) * BLOCK_WIDTH, int(BLOCK_WIDTH / 4)))
 
     def checkCollisions(self):
         if Vector2(self.fruit.x, self.fruit.y) == self.snake.body[0]:
@@ -174,7 +191,8 @@ class Game:
 
     def spawnFruit(self, fruit, otherFruit):
         fruit.randomize()
-        while Vector2(fruit.x, fruit.y) in self.snake.body or Vector2(fruit.x, fruit.y) == Vector2(otherFruit.x, otherFruit.y):
+        while Vector2(fruit.x, fruit.y) in self.snake.body or Vector2(fruit.x, fruit.y) == Vector2(otherFruit.x,
+                                                                                                   otherFruit.y):
             fruit.randomize()
         fruit.resetUpdateNum()
 
